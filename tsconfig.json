@@ -18,7 +18,9 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@Config/*": ["src/config/*"]
+      "@Common/*": ["src/common/*"],
+      "@Config/*": ["src/config/*"],
+      "@Entities/*":["src/entities/*"]
     }
   }
 }
