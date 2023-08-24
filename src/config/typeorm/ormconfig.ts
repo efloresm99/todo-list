@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { join } from 'path';
 import { DataSource } from 'typeorm';
 
-export const ormconfig = new DataSource({
+const ormconfig = new DataSource({
   type: 'postgres',
   host: process.env.DATABASE_HOST,
   port: +process.env.DATABASE_PORT,
@@ -13,3 +13,5 @@ export const ormconfig = new DataSource({
   entities: [join(__dirname, '..', '..', 'entities/*.entity{.ts,.js}')],
   migrations: [join(__dirname, '..', 'migrations/*{.ts,.js}')],
 });
+
+export default ormconfig;

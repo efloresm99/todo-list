@@ -1,10 +1,10 @@
 {
   "name": "todo",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "A cool todo app",
+  "author": "Eduardo Flores",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -17,7 +17,14 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js --d ./src/config/typeorm/ormconfig.ts",
+    "typeorm:create": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "typeorm:migrate": "npm run typeorm migration:generate",
+    "typeorm:run": "npm run typeorm migration:run",
+    "typeorm:revert": "npm run typeorm migration:revert",
+    "typeorm:drop": "npm run typeorm schema:drop",
+    "typeorm:reset": "npm run typeorm:drop && npm run typeorm:sync"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
