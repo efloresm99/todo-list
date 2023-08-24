@@ -20,7 +20,8 @@
     "paths": {
       "@Common/*": ["src/common/*"],
       "@Config/*": ["src/config/*"],
-      "@Entities/*":["src/entities/*"]
+      "@Entities":["src/entities/"],
+      "@Users/*":["src/users/*"]
     }
   }
 }
