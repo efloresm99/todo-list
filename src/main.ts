@@ -1,6 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
+import { QueryFailedExceptionFilter } from '@Common/filters';
+
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -13,6 +15,7 @@ async function bootstrap() {
       whitelist: true,
     }),
   );
+  app.useGlobalFilters(new QueryFailedExceptionFilter());
   app.setGlobalPrefix('api/');
   await app.listen(port || 3000);
 }
