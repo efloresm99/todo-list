@@ -23,4 +23,8 @@ export class UsersService {
     });
     return this.usersRepository.save(userToSave);
   }
+
+  async getOneUserForAuth(email: string): Promise<User> {
+    return this.usersRepository.findOneBy({ email });
+  }
 }
