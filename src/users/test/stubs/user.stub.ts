@@ -10,5 +10,6 @@ export const getUserStub = (): User => {
     createdAt: new Date('2023-01-01'),
     updatedAt: null,
     lists: [],
+    invalidTokens: [],
   };
 };

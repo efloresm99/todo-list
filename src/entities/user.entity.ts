@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import { List } from './lists.entity';
+import { List, InvalidToken } from '@Entities';
 
 @Entity('user')
 export class User {
@@ -28,6 +28,9 @@ export class User {
 
   @OneToMany(() => List, (list) => list.owner)
   lists: List[];
+
+  @OneToMany(() => InvalidToken, (invalidToken) => invalidToken.user)
+  invalidTokens: InvalidToken[];
 
   @CreateDateColumn()
   createdAt: Date;
