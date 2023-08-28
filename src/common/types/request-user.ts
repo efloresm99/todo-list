@@ -3,4 +3,5 @@ export class RequestUser {
   firstName: string;
   lastName: string;
   email: string;
+  jti: string;
 }

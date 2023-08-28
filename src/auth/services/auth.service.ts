@@ -1,14 +1,20 @@
 import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
+import { InvalidToken } from '@Entities';
 import { UsersService } from '@Users/services';
+import { RequestUser } from '@Common/types';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private usersService: UsersService,
-    private jwtService: JwtService,
+    @InjectRepository(InvalidToken)
+    private readonly invalidTokenRepository: Repository<InvalidToken>,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async validateUser(email: string, providedPassword: string): Promise<any> {
@@ -34,5 +40,15 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(user),
     };
+  }
+
+  async logout(userReq: RequestUser): Promise<void> {
+    const tokenToInvalidate = this.invalidTokenRepository.create({
+      jti: userReq.jti,
+      user: {
+        id: userReq.id,
+      },
+    });
+    await this.invalidTokenRepository.save(tokenToInvalidate);
   }
 }
