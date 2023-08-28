@@ -25,6 +25,11 @@ export class UsersService {
   }
 
   async getOneUserForAuth(email: string): Promise<User> {
-    return this.usersRepository.findOneBy({ email });
+    return this.usersRepository.findOne({
+      where: { email },
+      relations: {
+        invalidTokens: true,
+      },
+    });
   }
 }
