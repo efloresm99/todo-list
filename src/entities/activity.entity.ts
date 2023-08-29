@@ -2,11 +2,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { Priorities } from '@Common/enums';
+import { List } from '@Entities';
 
 @Entity('activity')
 export class Activity {
@@ -24,6 +26,9 @@ export class Activity {
 
   @Column({ type: 'boolean', default: false })
   completed: boolean;
+
+  @ManyToOne(() => List, (list) => list.activities)
+  list: List;
 
   @CreateDateColumn()
   createdAt: Date;
