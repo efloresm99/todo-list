@@ -13,10 +13,10 @@ export class List {
   @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
-  @Column('varchar')
+  @Column('varchar', { length: 50 })
   name: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true, length: 100 })
   description?: string;
 
   @Column({ type: 'boolean', default: false })
