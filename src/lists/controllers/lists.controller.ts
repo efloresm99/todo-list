@@ -37,12 +37,21 @@ export class ListsController {
     @User() user: RequestUser,
     @Body() updateListDto: UpdateListDto,
     @Param() numericIdDto: NumericIdDto,
-  ) {
+  ): Promise<ListDoc> {
     const list = await this.listsService.updateList(
       user,
       numericIdDto.id,
       updateListDto,
     );
+    return plainToInstance(ListDoc, list, { excludeExtraneousValues: true });
+  }
+
+  @Get(':id')
+  async getListById(
+    @User() user: RequestUser,
+    @Param() numericIdDto: NumericIdDto,
+  ): Promise<ListDoc> {
+    const list = await this.listsService.getListById(user, numericIdDto.id);
     return plainToInstance(ListDoc, list, { excludeExtraneousValues: true });
   }
 }
