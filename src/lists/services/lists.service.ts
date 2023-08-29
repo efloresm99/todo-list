@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { List } from '@Entities';
+import { PaginationQueryDto } from '@Common/dtos';
 import { RequestUser } from '@Common/types';
 
 import { CreateListDto, UpdateListDto } from '../dtos';
@@ -25,6 +26,23 @@ export class ListsService {
       },
     });
     return this.listsRepository.save(listToSave);
+  }
+
+  async getUserLists(
+    user: RequestUser,
+    pagination: PaginationQueryDto,
+  ): Promise<[List[], number]> {
+    const { id } = user;
+    const { limit: take, offset: skip } = pagination;
+    return this.listsRepository.findAndCount({
+      where: {
+        owner: {
+          id,
+        },
+      },
+      take,
+      skip,
+    });
   }
 
   async getListById(user: RequestUser, listId: number): Promise<List> {

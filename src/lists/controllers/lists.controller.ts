@@ -6,17 +6,19 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
 import { AuthGuard } from '@Auth/guards';
 import { User } from '@Common/decorators';
 import { RequestUser } from '@Common/types';
+import { NumericIdDto, PaginationQueryDto } from '@Common/dtos';
+import { serializePaginatedResponse } from '@Common/utils';
 
 import { CreateListDto, UpdateListDto } from '../dtos';
 import { ListsService } from '../services';
 import { ListDoc } from '../docs';
-import { NumericIdDto } from '@Common/dtos';
 
 @UseGuards(AuthGuard)
 @Controller('lists')
@@ -30,6 +32,18 @@ export class ListsController {
   ) {
     const list = await this.listsService.createList(user, createListDto);
     return plainToInstance(ListDoc, list, { excludeExtraneousValues: true });
+  }
+
+  @Get()
+  async getUserLists(
+    @User() user: RequestUser,
+    @Query() paginationDto: PaginationQueryDto,
+  ) {
+    const listsAndCount = await this.listsService.getUserLists(
+      user,
+      paginationDto,
+    );
+    return serializePaginatedResponse(ListDoc, listsAndCount);
   }
 
   @Patch(':id')
