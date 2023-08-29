@@ -2,7 +2,10 @@ import { plainToInstance } from 'class-transformer';
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
@@ -67,5 +70,14 @@ export class ListsController {
   ): Promise<ListDoc> {
     const list = await this.listsService.getListById(user, numericIdDto.id);
     return plainToInstance(ListDoc, list, { excludeExtraneousValues: true });
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete(':id')
+  async deleteListById(
+    @User() user: RequestUser,
+    @Param() numericIdDto: NumericIdDto,
+  ): Promise<void> {
+    await this.listsService.deleteList(user, numericIdDto.id);
   }
 }

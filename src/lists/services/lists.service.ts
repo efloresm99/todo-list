@@ -73,4 +73,17 @@ export class ListsService {
     list.description = description ?? list.description;
     return this.listsRepository.save(list);
   }
+
+  async deleteList(user: RequestUser, listId: number): Promise<void> {
+    const { id } = user;
+    const deletedList = await this.listsRepository.delete({
+      id: listId,
+      owner: {
+        id,
+      },
+    });
+    if (!deletedList.affected) {
+      throw new NotFoundException(`List, id ${listId}, Not Found`);
+    }
+  }
 }
