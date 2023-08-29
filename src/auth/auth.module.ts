@@ -22,5 +22,6 @@ const tokenJti = crypto.randomUUID();
   ],
   providers: [AuthService, LocalStrategy],
   controllers: [AuthController],
+  exports: [AuthService, JwtModule],
 })
 export class AuthModule {}

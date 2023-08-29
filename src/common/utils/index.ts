@@ -1,1 +1,1 @@
-export * from './serialize-response.util';
+export * from './serialize-paginated-response.util';

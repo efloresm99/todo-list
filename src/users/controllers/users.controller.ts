@@ -1,11 +1,10 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { ApiCreatedResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-import { serializeResponse } from '@Common/utils';
-
 import { CreateUserDto } from '../dto';
 import { UsersService } from '../services';
 import { UserDoc } from '../docs';
+import { plainToInstance } from 'class-transformer';
 
 @ApiTags('Users')
 @Controller('users')
@@ -23,6 +22,8 @@ export class UsersController {
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto): Promise<UserDoc> {
     const savedUser = await this.usersService.createUser(createUserDto);
-    return serializeResponse(UserDoc, savedUser);
+    return plainToInstance(UserDoc, savedUser, {
+      excludeExtraneousValues: true,
+    });
   }
 }
