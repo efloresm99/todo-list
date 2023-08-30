@@ -21,7 +21,7 @@ import { CreateActivityDto } from '../dtos';
 
 @UseGuards(AuthGuard)
 @Controller('lists/:id/activities')
-export class ActivitiesController {
+export class ListActivitiesController {
   constructor(private readonly activitiesService: ActivitiesService) {}
   @Post()
   async createActivity(

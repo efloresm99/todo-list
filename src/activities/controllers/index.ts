@@ -1,1 +1,1 @@
-export * from './activities.controller';
+export * from './list-activities.controller';
