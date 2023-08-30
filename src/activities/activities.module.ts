@@ -6,7 +6,7 @@ import { AuthModule } from '@Auth/auth.module';
 import { ListsModule } from '@Lists/lists.module';
 import { UsersModule } from '@Users/users.module';
 
-import { ListActivitiesController } from './controllers';
+import { ActivitiesController, ListActivitiesController } from './controllers';
 import { ActivitiesService } from './services';
 
 @Module({
@@ -16,7 +16,7 @@ import { ActivitiesService } from './services';
     AuthModule,
     UsersModule,
   ],
-  controllers: [ListActivitiesController],
+  controllers: [ActivitiesController, ListActivitiesController],
   providers: [ActivitiesService],
 })
 export class ActivitiesModule {}
