@@ -18,7 +18,7 @@ export class Activity {
   @Column({ type: 'varchar', length: 70 })
   name: string;
 
-  @Column({ type: 'varchar', nullable: true })
+  @Column({ type: 'varchar', nullable: true, length: 150 })
   description?: string;
 
   @Column({ type: 'enum', enum: Priorities, default: Priorities.MEDIUM })
