@@ -11,5 +11,6 @@ import { ListsController } from './controllers';
   imports: [TypeOrmModule.forFeature([List]), AuthModule, UsersModule],
   controllers: [ListsController],
   providers: [ListsService],
+  exports: [ListsService],
 })
 export class ListsModule {}
