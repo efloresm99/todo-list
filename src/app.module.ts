@@ -6,6 +6,7 @@ import ormconfig from '@Config/typeorm/ormconfig';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ListsModule } from './lists/lists.module';
+import { ActivitiesModule } from './activities/activities.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { ListsModule } from './lists/lists.module';
     UsersModule,
     AuthModule,
     ListsModule,
+    ActivitiesModule,
   ],
 })
 export class AppModule {}

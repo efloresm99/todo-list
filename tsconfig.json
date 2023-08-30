@@ -22,7 +22,9 @@
       "@Common/*": ["src/common/*"],
       "@Config/*": ["src/config/*"],
       "@Entities":["src/entities/"],
-      "@Users/*":["src/users/*"]
+      "@Users/*":["src/users/*"],
+      "@Lists/*":["src/lists/*"],
+      "@Activities/*":["src/activities/*"]
     }
   }
 }
