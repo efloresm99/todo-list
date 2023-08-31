@@ -17,9 +17,10 @@ import { User } from '@Common/decorators';
 import { NumericIdDto } from '@Common/dtos';
 import { RequestUser } from '@Common/types';
 import {
-  DeleteBulkActivitiesDto,
+  BulkActivitiesDto,
   UpdateActivityDto,
   UpdateStatusDto,
+  UpdateBulkStatusDto,
 } from '@Activities/dtos';
 import { ActivityDoc } from '@Activities/docs';
 
@@ -32,12 +33,27 @@ export class ActivitiesController {
   @Delete()
   async deleteManyActivities(
     @User() user: RequestUser,
-    @Body() deleteBulkActivitiesDto: DeleteBulkActivitiesDto,
+    @Body() deleteBulkActivitiesDto: BulkActivitiesDto,
   ): Promise<void> {
     await this.activitiesService.deleteManyActivities(
       user,
       deleteBulkActivitiesDto,
     );
+  }
+
+  @Put('/status')
+  async updateManyActivitiesStatus(
+    @User() user: RequestUser,
+    @Body() updateBulkStatusDto: UpdateBulkStatusDto,
+  ) {
+    const updatedActivities =
+      await this.activitiesService.updateManyActivityStatus(
+        user,
+        updateBulkStatusDto,
+      );
+    return plainToInstance(ActivityDoc, updatedActivities, {
+      excludeExtraneousValues: true,
+    });
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)

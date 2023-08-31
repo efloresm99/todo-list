@@ -3,10 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Activity } from '@Entities';
-import { ListsService } from '@Lists/services';
 import {
   BulkActivitiesDto,
   UpdateActivityDto,
+  UpdateBulkStatusDto,
   UpdateStatusDto,
 } from '@Activities/dtos';
 import { NumericIdDto } from '@Common/dtos';
@@ -18,7 +18,6 @@ export class ActivitiesService {
   constructor(
     @InjectRepository(Activity)
     private readonly activitiesRepository: Repository<Activity>,
-    private readonly listsService: ListsService,
   ) {}
 
   async getActivityById(user: RequestUser, id: number): Promise<Activity> {
@@ -90,6 +89,19 @@ export class ActivitiesService {
     const activity = await this.getActivityById(user, activityId);
     activity.completed = updateStatusDto.completed;
     return this.activitiesRepository.save(activity);
+  }
+
+  async updateManyActivityStatus(
+    user: RequestUser,
+    updateBulkStatusDto: UpdateBulkStatusDto,
+  ): Promise<Activity[]> {
+    const { activityIds, completed } = updateBulkStatusDto;
+    const activities = await this.getManyActivitiesByIds(user, activityIds);
+    const updatedActivities = activities.map((activity) => {
+      activity.completed = completed;
+      return activity;
+    });
+    return this.activitiesRepository.save(updatedActivities);
   }
 
   async deleteManyActivities(
