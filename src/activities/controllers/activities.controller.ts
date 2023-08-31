@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Patch,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
@@ -15,7 +16,11 @@ import { AuthGuard } from '@Auth/guards';
 import { User } from '@Common/decorators';
 import { NumericIdDto } from '@Common/dtos';
 import { RequestUser } from '@Common/types';
-import { DeleteBulkActivitiesDto, UpdateActivityDto } from '@Activities/dtos';
+import {
+  DeleteBulkActivitiesDto,
+  UpdateActivityDto,
+  UpdateStatusDto,
+} from '@Activities/dtos';
 import { ActivityDoc } from '@Activities/docs';
 
 @UseGuards(AuthGuard)
@@ -56,6 +61,22 @@ export class ActivitiesController {
       updateActivityDto,
     );
     return plainToInstance(ActivityDoc, updatedActivity, {
+      excludeExtraneousValues: true,
+    });
+  }
+
+  @Put(':id/status')
+  async updateActivityStatus(
+    @User() user: RequestUser,
+    @Param() idDto: NumericIdDto,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ): Promise<ActivityDoc> {
+    const updatedStatus = await this.activitiesService.updateActivityStatus(
+      user,
+      idDto.id,
+      updateStatusDto,
+    );
+    return plainToInstance(ActivityDoc, updatedStatus, {
       excludeExtraneousValues: true,
     });
   }

@@ -7,7 +7,7 @@ import { ListsModule } from '@Lists/lists.module';
 import { UsersModule } from '@Users/users.module';
 
 import { ActivitiesController, ListActivitiesController } from './controllers';
-import { ActivitiesService } from './services';
+import { ActivitiesService, ListActivitiesService } from './services';
 
 @Module({
   imports: [
@@ -17,6 +17,6 @@ import { ActivitiesService } from './services';
     UsersModule,
   ],
   controllers: [ActivitiesController, ListActivitiesController],
-  providers: [ActivitiesService],
+  providers: [ListActivitiesService, ActivitiesService],
 })
 export class ActivitiesModule {}

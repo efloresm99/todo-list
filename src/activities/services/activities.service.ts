@@ -5,11 +5,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from '@Entities';
 import { ListsService } from '@Lists/services';
 import {
-  CreateActivityDto,
   DeleteBulkActivitiesDto,
   UpdateActivityDto,
+  UpdateStatusDto,
 } from '@Activities/dtos';
-import { NumericIdDto, PaginationQueryDto } from '@Common/dtos';
+import { NumericIdDto } from '@Common/dtos';
 import { RequestUser } from '@Common/types';
 import { getNotFoundIds } from '@Common/utils';
 
@@ -20,39 +20,6 @@ export class ActivitiesService {
     private readonly activitiesRepository: Repository<Activity>,
     private readonly listsService: ListsService,
   ) {}
-
-  async createActivity(
-    user: RequestUser,
-    listId: NumericIdDto,
-    createActivityDto: CreateActivityDto,
-  ): Promise<Activity> {
-    await this.listsService.getListById(user, listId.id);
-    const activityToCreate = this.activitiesRepository.create({
-      ...createActivityDto,
-      list: {
-        id: listId.id,
-      },
-    });
-    return this.activitiesRepository.save(activityToCreate);
-  }
-
-  async getListActivities(
-    user: RequestUser,
-    listId: NumericIdDto,
-    paginationDto: PaginationQueryDto,
-  ): Promise<[Activity[], number]> {
-    await this.listsService.getListById(user, listId.id);
-    const { limit: take, offset: skip } = paginationDto;
-    return this.activitiesRepository.findAndCount({
-      where: {
-        list: {
-          id: listId.id,
-        },
-      },
-      take,
-      skip,
-    });
-  }
 
   async getActivityById(user: RequestUser, id: number): Promise<Activity> {
     const activity = await this.activitiesRepository.findOne({
@@ -113,6 +80,16 @@ export class ActivitiesService {
   ): Promise<void> {
     const activity = await this.getActivityById(user, activityId.id);
     await this.activitiesRepository.remove(activity);
+  }
+
+  async updateActivityStatus(
+    user: RequestUser,
+    activityId: number,
+    updateStatusDto: UpdateStatusDto,
+  ): Promise<Activity> {
+    const activity = await this.getActivityById(user, activityId);
+    activity.completed = updateStatusDto.completed;
+    return this.activitiesRepository.save(activity);
   }
 
   async deleteManyActivities(
