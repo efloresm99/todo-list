@@ -4,7 +4,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { Activity } from '@Entities';
 import { ListsService } from '@Lists/services';
-import { CreateActivityDto, DeleteBulkActivitiesDto } from '@Activities/dtos';
+import {
+  CreateActivityDto,
+  DeleteBulkActivitiesDto,
+  UpdateActivityDto,
+} from '@Activities/dtos';
 import { NumericIdDto, PaginationQueryDto } from '@Common/dtos';
 import { RequestUser } from '@Common/types';
 import { getNotFoundIds } from '@Common/utils';
@@ -88,6 +92,19 @@ export class ActivitiesService {
       throw new NotFoundException(`Id(s) ${notFoundIds}, Not Found`);
     }
     return activities;
+  }
+
+  async updateActivity(
+    user: RequestUser,
+    activityId: number,
+    updateActivityDto: UpdateActivityDto,
+  ): Promise<Activity> {
+    const activity = await this.getActivityById(user, activityId);
+    const { name, description, priority } = updateActivityDto;
+    activity.name = name ?? activity.name;
+    activity.description = description ?? activity.description;
+    activity.priority = priority ?? activity.priority;
+    return this.activitiesRepository.save(activity);
   }
 
   async deleteActivity(
