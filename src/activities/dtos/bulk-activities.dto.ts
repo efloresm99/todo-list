@@ -1,6 +1,6 @@
 import { ArrayUnique, IsArray, IsInt, IsPositive } from 'class-validator';
 
-export class DeleteBulkActivitiesDto {
+export class BulkActivitiesDto {
   @IsArray()
   @ArrayUnique()
   @IsInt({ each: true })

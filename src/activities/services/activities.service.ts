@@ -5,7 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Activity } from '@Entities';
 import { ListsService } from '@Lists/services';
 import {
-  DeleteBulkActivitiesDto,
+  BulkActivitiesDto,
   UpdateActivityDto,
   UpdateStatusDto,
 } from '@Activities/dtos';
@@ -94,7 +94,7 @@ export class ActivitiesService {
 
   async deleteManyActivities(
     user: RequestUser,
-    deleteBulkActivitiesDto: DeleteBulkActivitiesDto,
+    deleteBulkActivitiesDto: BulkActivitiesDto,
   ): Promise<void> {
     const { activityIds } = deleteBulkActivitiesDto;
     const activities = await this.getManyActivitiesByIds(user, activityIds);
