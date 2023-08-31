@@ -27,7 +27,7 @@ export class Activity {
   @Column({ type: 'boolean', default: false })
   completed: boolean;
 
-  @ManyToOne(() => List, (list) => list.activities)
+  @ManyToOne(() => List, (list) => list.activities, { onDelete: 'CASCADE' })
   list: List;
 
   @CreateDateColumn()
