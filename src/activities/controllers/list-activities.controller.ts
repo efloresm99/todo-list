@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -10,7 +13,7 @@ import {
 import { plainToInstance } from 'class-transformer';
 
 import { ActivityDoc } from '@Activities/docs';
-import { ActivitiesService } from '@Activities/services';
+import { ListActivitiesService } from '@Activities/services';
 import { AuthGuard } from '@Auth/guards';
 import { User } from '@Common/decorators';
 import { NumericIdDto, PaginationQueryDto } from '@Common/dtos';
@@ -22,14 +25,14 @@ import { CreateActivityDto } from '../dtos';
 @UseGuards(AuthGuard)
 @Controller('lists/:id/activities')
 export class ListActivitiesController {
-  constructor(private readonly activitiesService: ActivitiesService) {}
+  constructor(private readonly listActivitiesService: ListActivitiesService) {}
   @Post()
   async createActivity(
     @User() user: RequestUser,
     @Param() listId: NumericIdDto,
     @Body() createActivityDto: CreateActivityDto,
   ): Promise<ActivityDoc> {
-    const activity = await this.activitiesService.createActivity(
+    const activity = await this.listActivitiesService.createActivity(
       user,
       listId,
       createActivityDto,
@@ -45,11 +48,21 @@ export class ListActivitiesController {
     @Param() listId: NumericIdDto,
     @Query() paginationDto: PaginationQueryDto,
   ): Promise<PaginatedResponse<ActivityDoc>> {
-    const activitiesAndCount = await this.activitiesService.getListActivities(
-      user,
-      listId,
-      paginationDto,
-    );
+    const activitiesAndCount =
+      await this.listActivitiesService.getListActivities(
+        user,
+        listId,
+        paginationDto,
+      );
     return serializePaginatedResponse(ActivityDoc, activitiesAndCount);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('completed')
+  async deleteCompletedActivities(
+    @User() user: RequestUser,
+    @Param() idDto: NumericIdDto,
+  ): Promise<void> {
+    await this.listActivitiesService.deleteCompletedActivities(user, idDto);
   }
 }

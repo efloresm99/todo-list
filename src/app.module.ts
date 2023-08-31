@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import ormconfig from '@Config/typeorm/ormconfig';
 
@@ -11,6 +12,7 @@ import { ActivitiesModule } from './activities/activities.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot(ormconfig.options),
+    EventEmitterModule.forRoot(),
     UsersModule,
     AuthModule,
     ListsModule,
