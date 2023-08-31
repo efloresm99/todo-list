@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ListsService } from '@Lists/services';
@@ -14,6 +15,7 @@ export class ListActivitiesService {
     @InjectRepository(Activity)
     private readonly activitiesRepository: Repository<Activity>,
     private readonly listsService: ListsService,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async createActivity(
@@ -28,7 +30,10 @@ export class ListActivitiesService {
         id: listId.id,
       },
     });
-    return this.activitiesRepository.save(activityToCreate);
+    const savedActivity =
+      await this.activitiesRepository.save(activityToCreate);
+    this.eventEmitter.emit('list.checkIfListIsFinished', [savedActivity.id]);
+    return savedActivity;
   }
 
   async getListActivities(

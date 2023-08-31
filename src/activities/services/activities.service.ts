@@ -1,5 +1,6 @@
 import { In, Repository } from 'typeorm';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Activity } from '@Entities';
@@ -18,6 +19,7 @@ export class ActivitiesService {
   constructor(
     @InjectRepository(Activity)
     private readonly activitiesRepository: Repository<Activity>,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   async getActivityById(user: RequestUser, id: number): Promise<Activity> {
@@ -88,7 +90,9 @@ export class ActivitiesService {
   ): Promise<Activity> {
     const activity = await this.getActivityById(user, activityId);
     activity.completed = updateStatusDto.completed;
-    return this.activitiesRepository.save(activity);
+    const savedActivity = await this.activitiesRepository.save(activity);
+    this.eventEmitter.emit('list.checkIfListIsFinished', [activityId]);
+    return savedActivity;
   }
 
   async updateManyActivityStatus(
@@ -101,7 +105,10 @@ export class ActivitiesService {
       activity.completed = completed;
       return activity;
     });
-    return this.activitiesRepository.save(updatedActivities);
+    const savedActivities =
+      await this.activitiesRepository.save(updatedActivities);
+    this.eventEmitter.emit('list.checkIfListIsFinished', activityIds);
+    return savedActivities;
   }
 
   async deleteManyActivities(
