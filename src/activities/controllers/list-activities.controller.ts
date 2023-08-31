@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -52,5 +55,14 @@ export class ListActivitiesController {
         paginationDto,
       );
     return serializePaginatedResponse(ActivityDoc, activitiesAndCount);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete('completed')
+  async deleteCompletedActivities(
+    @User() user: RequestUser,
+    @Param() idDto: NumericIdDto,
+  ): Promise<void> {
+    await this.listActivitiesService.deleteCompletedActivities(user, idDto);
   }
 }

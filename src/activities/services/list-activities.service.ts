@@ -1,5 +1,5 @@
 import { Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ListsService } from '@Lists/services';
@@ -47,5 +47,28 @@ export class ListActivitiesService {
       take,
       skip,
     });
+  }
+
+  async deleteCompletedActivities(
+    user: RequestUser,
+    idDto: NumericIdDto,
+  ): Promise<void> {
+    const activities = await this.activitiesRepository.find({
+      where: {
+        completed: true,
+        list: {
+          id: idDto.id,
+          owner: {
+            id: user.id,
+          },
+        },
+      },
+    });
+    if (!activities.length) {
+      throw new NotFoundException(
+        'No incomplete activities were found for the list',
+      );
+    }
+    await this.activitiesRepository.remove(activities);
   }
 }
