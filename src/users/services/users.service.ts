@@ -1,6 +1,8 @@
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Injectable } from '@nestjs/common';
+import { lastValueFrom } from 'rxjs';
+import { Inject, Injectable } from '@nestjs/common';
+import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { User } from '@Entities';
@@ -11,6 +13,7 @@ import { CreateUserDto } from '../dto';
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
+    @Inject('VERIFICATION') private readonly verificationClient: ClientProxy,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -21,7 +24,14 @@ export class UsersService {
       ...userData,
       password,
     });
-    return this.usersRepository.save(userToSave);
+    const user = await this.usersRepository.save(userToSave);
+    const validation = this.verificationClient.send(
+      { cmd: 'create_verification' },
+      { customId: user.id, format: 'string' },
+    );
+    const identifier = await lastValueFrom(validation);
+    // TODO: send email to user with the identifier
+    return user;
   }
 
   async getOneUserForAuth(email: string): Promise<User> {
