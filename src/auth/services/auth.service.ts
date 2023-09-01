@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { InvalidToken } from '@Entities';
 import { UsersService } from '@Users/services';
 import { RequestUser } from '@Common/types';
+import { VerifyUserDto } from '@Common/dtos/';
 
 @Injectable()
 export class AuthService {
@@ -50,5 +51,9 @@ export class AuthService {
       },
     });
     await this.invalidTokenRepository.save(tokenToInvalidate);
+  }
+
+  async verifyUser(verifyUserDto: VerifyUserDto): Promise<void> {
+    await this.usersService.verifyUser(verifyUserDto);
   }
 }

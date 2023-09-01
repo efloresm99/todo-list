@@ -4,6 +4,8 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -11,6 +13,7 @@ import { AuthGuard, LocalAuthGuard } from '@Auth/guards';
 import { AuthService } from '@Auth/services';
 import { User } from '@Common/decorators';
 import { RequestUser } from '@Common/types';
+import { VerifyUserDto } from '@Common/dtos/verify-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,5 +30,11 @@ export class AuthController {
   @Delete('logout')
   async logout(@User() user: RequestUser): Promise<void> {
     await this.authService.logout(user);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Put('verify')
+  async verifyUser(@Query() verifyUserDto: VerifyUserDto) {
+    await this.authService.verifyUser(verifyUserDto);
   }
 }
