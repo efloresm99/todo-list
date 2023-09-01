@@ -1,10 +1,15 @@
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { lastValueFrom } from 'rxjs';
-import { Inject, Injectable } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { VerifyUserDto } from '@Common/dtos';
 import { User } from '@Entities';
 
 import { CreateUserDto } from '../dto';
@@ -41,5 +46,35 @@ export class UsersService {
         invalidTokens: true,
       },
     });
+  }
+
+  async verifyUser(verifyUserDto: VerifyUserDto): Promise<void> {
+    const { verificationId, userEmail } = verifyUserDto;
+    const result = this.verificationClient.send(
+      { cmd: 'verify' },
+      { verificationId },
+    );
+    const customId = await lastValueFrom(result);
+    const emailsAreDifferent = customId !== userEmail;
+    const customIdNotFound = !customId;
+    const validationFailed = emailsAreDifferent || customIdNotFound;
+    if (validationFailed) {
+      this.userValidationFailed();
+    }
+    const user = await this.usersRepository.findOne({
+      where: {
+        email: customId,
+      },
+    });
+    if (!user) {
+      this.userValidationFailed();
+    }
+    user.verified = true;
+    this.usersRepository.save(user);
+    this.verificationClient.emit('delete_verification', { verificationId });
+  }
+
+  private userValidationFailed(): void {
+    throw new UnprocessableEntityException('Unable to verify user');
   }
 }
