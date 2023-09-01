@@ -7,6 +7,7 @@ export const getUserStub = (): User => {
     lastName: 'Doe',
     email: 'jdoe@example.com',
     password: 'hashedPassword',
+    verified: true,
     createdAt: new Date('2023-01-01'),
     updatedAt: null,
     lists: [],

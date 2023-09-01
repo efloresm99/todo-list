@@ -36,7 +36,7 @@ export class UsersService {
 
   async getOneUserForAuth(email: string): Promise<User> {
     return this.usersRepository.findOne({
-      where: { email },
+      where: { email, verified: true },
       relations: {
         invalidTokens: true,
       },
