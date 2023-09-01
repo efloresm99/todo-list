@@ -26,6 +26,9 @@ export class User {
   @Column('varchar', { length: 128 })
   password: string;
 
+  @Column('boolean', { default: false })
+  verified: boolean;
+
   @OneToMany(() => List, (list) => list.owner)
   lists: List[];
 
