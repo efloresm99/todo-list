@@ -27,7 +27,7 @@ export class UsersService {
     const user = await this.usersRepository.save(userToSave);
     const validation = this.verificationClient.send(
       { cmd: 'create_verification' },
-      { customId: user.id, format: 'string' },
+      { customId: user.email, format: 'string' },
     );
     const identifier = await lastValueFrom(validation);
     // TODO: send email to user with the identifier
