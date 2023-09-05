@@ -33,7 +33,7 @@ export class AuthController {
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
-  @Put('verify')
+  @Put('verification')
   async verifyUser(@Query() verifyUserDto: VerifyUserDto) {
     await this.authService.verifyUser(verifyUserDto);
   }
