@@ -9,6 +9,7 @@ import { UsersService } from '@Users/services';
 import { RequestUser } from '@Common/types';
 import { VerifyUserDto } from '@Common/dtos/';
 import { CreateVerificationDto } from '@Auth/dtos';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -19,8 +20,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, providedPassword: string): Promise<any> {
-    const user = await this.usersService.getOneUserForAuth(email);
+  async validateUser(
+    email: string,
+    providedPassword: string,
+    verified = true,
+  ): Promise<any> {
+    const user = await this.usersService.getOneUserForAuth(email, verified);
     const passwordIsCorrect = await bcrypt.compare(
       providedPassword,
       user?.password || '',
@@ -60,9 +65,9 @@ export class AuthService {
 
   async createVerification(
     createVerificationDto: CreateVerificationDto,
-  ): Promise<void> {
+  ): Promise<string> {
     const { email, password } = createVerificationDto;
-    const user = await this.validateUser(email, password);
+    const user = await this.validateUser(email, password, false);
     if (!user) {
       return null;
     }
@@ -71,7 +76,8 @@ export class AuthService {
       user.email,
     );
     if (!userVerification) {
-      await this.usersService.createUserVerification(user.email);
+      const result = await this.usersService.createUserVerification(user.email);
+      return await lastValueFrom(result);
     }
   }
 }
