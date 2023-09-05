@@ -36,9 +36,9 @@ export class UsersService {
     return user;
   }
 
-  async getOneUserForAuth(email: string): Promise<User> {
+  async getOneUserForAuth(email: string, verified = true): Promise<User> {
     return this.usersRepository.findOne({
-      where: { email, verified: true },
+      where: { email, verified },
       relations: {
         invalidTokens: true,
       },
@@ -46,7 +46,7 @@ export class UsersService {
   }
 
   async getUserVerification(email: string): Promise<string> {
-    return await lastValueFrom(
+    return lastValueFrom(
       this.verificationClient.send(
         { cmd: 'get_verification_by_custom_id' },
         { customId: email },
