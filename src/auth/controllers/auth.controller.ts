@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   HttpCode,
@@ -14,6 +15,7 @@ import { AuthService } from '@Auth/services';
 import { User } from '@Common/decorators';
 import { RequestUser } from '@Common/types';
 import { VerifyUserDto } from '@Common/dtos/verify-user.dto';
+import { CreateVerificationDto } from '@Auth/dtos';
 
 @Controller('auth')
 export class AuthController {
@@ -36,5 +38,13 @@ export class AuthController {
   @Put('verification')
   async verifyUser(@Query() verifyUserDto: VerifyUserDto) {
     await this.authService.verifyUser(verifyUserDto);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Post('verification')
+  async createVerification(
+    @Body() createVerificationDto: CreateVerificationDto,
+  ): Promise<void> {
+    await this.authService.createVerification(createVerificationDto);
   }
 }
