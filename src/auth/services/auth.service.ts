@@ -8,6 +8,8 @@ import { InvalidToken } from '@Entities';
 import { UsersService } from '@Users/services';
 import { RequestUser } from '@Common/types';
 import { VerifyUserDto } from '@Common/dtos/';
+import { CreateVerificationDto } from '@Auth/dtos';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
@@ -18,8 +20,12 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async validateUser(email: string, providedPassword: string): Promise<any> {
-    const user = await this.usersService.getOneUserForAuth(email);
+  async validateUser(
+    email: string,
+    providedPassword: string,
+    verified = true,
+  ): Promise<any> {
+    const user = await this.usersService.getOneUserForAuth(email, verified);
     const passwordIsCorrect = await bcrypt.compare(
       providedPassword,
       user?.password || '',
@@ -55,5 +61,23 @@ export class AuthService {
 
   async verifyUser(verifyUserDto: VerifyUserDto): Promise<void> {
     await this.usersService.verifyUser(verifyUserDto);
+  }
+
+  async createVerification(
+    createVerificationDto: CreateVerificationDto,
+  ): Promise<string> {
+    const { email, password } = createVerificationDto;
+    const user = await this.validateUser(email, password, false);
+    if (!user) {
+      return null;
+    }
+
+    const userVerification = await this.usersService.getUserVerification(
+      user.email,
+    );
+    if (!userVerification) {
+      const result = await this.usersService.createUserVerification(user.email);
+      return await lastValueFrom(result);
+    }
   }
 }

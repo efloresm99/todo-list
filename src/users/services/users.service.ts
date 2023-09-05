@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { lastValueFrom } from 'rxjs';
+import { Observable, lastValueFrom } from 'rxjs';
 import {
   Inject,
   Injectable,
@@ -30,22 +30,35 @@ export class UsersService {
       password,
     });
     const user = await this.usersRepository.save(userToSave);
-    const validation = this.verificationClient.send(
-      { cmd: 'create_verification' },
-      { customId: user.email, format: 'string' },
-    );
+    const validation = await this.createUserVerification(user.email);
     const identifier = await lastValueFrom(validation);
     // TODO: send email to user with the identifier
     return user;
   }
 
-  async getOneUserForAuth(email: string): Promise<User> {
+  async getOneUserForAuth(email: string, verified = true): Promise<User> {
     return this.usersRepository.findOne({
-      where: { email, verified: true },
+      where: { email, verified },
       relations: {
         invalidTokens: true,
       },
     });
+  }
+
+  async getUserVerification(email: string): Promise<string> {
+    return lastValueFrom(
+      this.verificationClient.send(
+        { cmd: 'get_verification_by_custom_id' },
+        { customId: email },
+      ),
+    );
+  }
+
+  async createUserVerification(email: string): Promise<Observable<any>> {
+    return this.verificationClient.send(
+      { cmd: 'create_verification' },
+      { customId: email, format: 'string' },
+    );
   }
 
   async verifyUser(verifyUserDto: VerifyUserDto): Promise<void> {
