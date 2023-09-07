@@ -1,6 +1,6 @@
-import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { Observable, lastValueFrom } from 'rxjs';
+import { Repository } from 'typeorm';
 import {
   Inject,
   Injectable,
@@ -11,6 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { VerifyUserDto } from '@Common/dtos';
 import { User } from '@Entities';
+import { buildMail } from '@Users/utils';
 
 import { CreateUserDto } from '../dto';
 
@@ -19,6 +20,7 @@ export class UsersService {
   constructor(
     @InjectRepository(User) private readonly usersRepository: Repository<User>,
     @Inject('VERIFICATION') private readonly verificationClient: ClientProxy,
+    @Inject('EMAIL_SERVICE') private readonly emailClient: ClientProxy,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -31,8 +33,8 @@ export class UsersService {
     });
     const user = await this.usersRepository.save(userToSave);
     const validation = await this.createUserVerification(user.email);
-    const identifier = await lastValueFrom(validation);
-    // TODO: send email to user with the identifier
+    const verification = await lastValueFrom(validation);
+    this.emailClient.emit('send_email', buildMail(verification, { user }));
     return user;
   }
 
