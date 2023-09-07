@@ -2,7 +2,9 @@ import Handlebars from 'handlebars';
 import * as path from 'path';
 import { readFileSync } from 'fs';
 
-export const buildMail = (verification: any, context: any) => {
+import { VerificationDto } from '@Users/dto';
+
+export const buildMail = (verification: VerificationDto, context: any) => {
   const file = getVerificationTemplate();
   const html = Handlebars.compile(file);
   return {

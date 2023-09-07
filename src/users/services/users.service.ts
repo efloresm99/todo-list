@@ -13,7 +13,7 @@ import { VerifyUserDto } from '@Common/dtos';
 import { User } from '@Entities';
 import { buildMail } from '@Users/utils';
 
-import { CreateUserDto } from '../dto';
+import { CreateUserDto, VerificationDto } from '../dto';
 
 @Injectable()
 export class UsersService {
@@ -33,7 +33,7 @@ export class UsersService {
     });
     const user = await this.usersRepository.save(userToSave);
     const validation = await this.createUserVerification(user.email);
-    const verification = await lastValueFrom(validation);
+    const verification = (await lastValueFrom(validation)) as VerificationDto;
     this.emailClient.emit('send_email', buildMail(verification, { user }));
     return user;
   }
